@@ -44,7 +44,7 @@ mental_health_mlp/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/lilly-njanja/mental_health_mlp.git
+git clone https://github.com/your-username/mental_health_mlp.git
 cd mental_health_mlp
 ```
 
@@ -161,7 +161,7 @@ This tool is for **informational purposes only** and is **not** a substitute for
 ## 🛠️ Built With
 
 - [Streamlit](https://streamlit.io/) — App framework
-- [XGBoost](https://xgboost.readthedocs.io/) — Primary ML model
+- [MLP](https://scikit-learn.org/stable/modules/neural_networks_supervised.html) — Primary ML model
 - [Supabase](https://supabase.com/) — PostgreSQL database & auth backend
 - [Plotly](https://plotly.com/) — Interactive charts
 - [ReportLab](https://www.reportlab.com/) — PDF generation
