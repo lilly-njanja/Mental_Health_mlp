@@ -25,7 +25,7 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,600&display=swap');
 
 html, body, [class*="css"] { font-family: 'Poppins', sans-serif; color: #1a1a2e; }
-.stApp { background: #f4f1eb; }
+.stApp { background: #f0f4fa; }
 
 [data-testid="stSidebar"] { background: #1a1a2e !important; border-right: none; }
 [data-testid="stSidebar"] * { color: #e8e4da !important; }
@@ -54,8 +54,9 @@ html, body, [class*="css"] { font-family: 'Poppins', sans-serif; color: #1a1a2e;
 label { color: #2a2a3e !important; font-size: 0.88rem !important; font-weight: 500 !important; }
 p, li, span { color: #1a1a2e; }
 
-.stButton > button { background: #1a1a2e !important; color: #f4f1eb !important; border: none !important; border-radius: 12px !important; padding: 0.75rem 2.2rem !important; font-size: 0.95rem !important; font-weight: 600 !important; letter-spacing: 0.04em !important; width: 100% !important; transition: background 0.2s ease !important; }
-.stButton > button:hover { background: #6c63ff !important; }
+.stButton > button { background: #6c63ff !important; color: #ffffff !important; border: none !important; border-radius: 12px !important; padding: 0.75rem 2.2rem !important; font-size: 0.95rem !important; font-weight: 600 !important; letter-spacing: 0.04em !important; width: 100% !important; transition: background 0.2s ease !important; }
+.stButton > button p, .stButton > button span { color: #ffffff !important; }
+.stButton > button:hover { background: #1a1a2e !important; }
 
 .result-wrap { border-radius: 18px; padding: 2rem 2.4rem; margin-top: 1.5rem; text-align: center; }
 .result-low      { background: #e8f5e9; border: 2px solid #43a047; }
@@ -98,42 +99,43 @@ if "is_admin" not in st.session_state:
     st.session_state["is_admin"] = False
 
 # ═══════════════════════════════════════════════════════════
-# SIDEBAR NAVIGATION
+# TOP NAVIGATION
 # ═══════════════════════════════════════════════════════════
-with st.sidebar:
-    st.markdown("""
-    <div style='text-align:center;padding:1.2rem 0 0.5rem 0;'>
-        <div style='font-size:2.4rem;'>🧠</div>
-        <div style='font-family:"Poppins",sans-serif;font-size:1.3rem;font-weight:600;color:#f4f1eb;margin-top:0.3rem;'>MindGuard</div>
-        <div style='font-size:0.75rem;color:#9090aa;letter-spacing:0.12em;text-transform:uppercase;margin-top:0.1rem;'>Mental Health Risk</div>
+st.markdown("""
+<div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;'>
+    <div style='display: flex; align-items: center; gap: 0.8rem;'>
+        <div style='font-size:2rem; animation: float 3s ease-in-out infinite;'>🧠</div>
+        <div>
+            <div style='font-family:"Poppins",sans-serif;font-size:1.4rem;font-weight:700;color:#1a1a2e;line-height:1.2;'>MindGuard</div>
+            <div style='font-size:0.7rem;color:#7a7a8c;letter-spacing:0.05em;text-transform:uppercase;'>Mental Health Risk</div>
+        </div>
     </div>
-    """, unsafe_allow_html=True)
-    st.markdown("---")
-    
-    if st.session_state["logged_in"]:
-        if st.session_state["is_admin"]:
-            pages = ["🛡️ Admin Dashboard", "🔓 Logout"]
-        else:
-            pages = ["🏠 Home", "🔮 Prediction", "📜 My History", "📖 About", "🔓 Logout"]
-            
-        st.markdown(f"<div style='text-align:center;color:#6c63ff;margin-bottom:10px;font-size:0.9rem;'>Welcome, <b style='color:#f4f1eb;'>{st.session_state['username']}</b></div>", unsafe_allow_html=True)
+    <div style='font-size:0.95rem; color:#6c63ff; font-weight: 500;'>
+""", unsafe_allow_html=True)
+if st.session_state["logged_in"]:
+    st.markdown(f"Welcome, <b style='color:#1a1a2e;'>{st.session_state['username']}</b></div></div>", unsafe_allow_html=True)
+else:
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
+if st.session_state["logged_in"]:
+    if st.session_state["is_admin"]:
+        pages = ["🛡️ Admin Dashboard", "🔓 Logout"]
     else:
-        pages = ["🔑 Login / Register"]
-        if st.session_state["page"] not in pages:
-            st.session_state["page"] = "🔑 Login / Register"
-        
-    page_idx = pages.index(st.session_state["page"]) if st.session_state["page"] in pages else 0
-    selected = st.radio("Navigate", pages,
-                        index=page_idx,
-                        label_visibility="collapsed")
-    st.session_state["page"] = selected
-    st.markdown("---")
-    st.markdown("""
-    <div style='font-size:0.78rem;color:#7a7a9a;line-height:1.6;padding:0 0.2rem;'>
-    ⚠️ <strong style='color:#a0a0ba;'>Disclaimer</strong><br>
-    For informational purposes only. Not a substitute for professional mental health advice.
-    </div>
-    """, unsafe_allow_html=True)
+        pages = ["🏠 Home", "🔮 Prediction", "📜 My History", "📖 About", "🔓 Logout"]
+else:
+    pages = ["🔑 Login / Register"]
+    if st.session_state["page"] not in pages:
+        st.session_state["page"] = "🔑 Login / Register"
+
+if len(pages) > 1:
+    nav_cols = st.columns(len(pages))
+    for idx, page_name in enumerate(pages):
+        with nav_cols[idx]:
+            btn_type = "primary" if st.session_state["page"] == page_name else "secondary"
+            if st.button(page_name, use_container_width=True, type=btn_type, key=f"nav_top_{idx}"):
+                st.session_state["page"] = page_name
+                st.rerun()
+    st.markdown("<br>", unsafe_allow_html=True)
 
 if st.session_state["page"] == "🔓 Logout":
     st.session_state["logged_in"] = False
@@ -376,15 +378,15 @@ def generate_pdf(inputs_display, predicted_label, probabilities, recommendations
 # ═══════════════════════════════════════════════════════════
 if st.session_state["page"] == "🏠 Home":
 
-    st.markdown('<h1 class="page-title">Mental Health<br><em>Risk Predictor</em></h1>', unsafe_allow_html=True)
-    st.markdown('<p class="page-subtitle">An intelligent screening tool powered by XGBoost to assess psychological well-being across key life dimensions.</p>', unsafe_allow_html=True)
+    st.markdown('<h1 class="page-title">Mental Health<br>Risk Predictor</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="page-subtitle">An intelligent, AI-powered screening tool to assess psychological well-being across key life dimensions.</p>', unsafe_allow_html=True)
 
     c1, c2, c3, c4 = st.columns(4)
     for col, (num, label, color) in zip([c1,c2,c3,c4], [
-        ("XGBoost",     "Primary Model",         "#6c63ff"),
+        ("AI",          "Powered Analysis",       "#6c63ff"),
         ("3",           "Risk Categories",        "#e53935"),
-        ("4",           "Models Compared",        "#43a047"),
-        ("SMOTENC",     "Class Balancing",        "#f9a825"),
+        ("15+",         "Indicators Analyzed",    "#43a047"),
+        ("100%",        "Private & Secure",       "#f9a825"),
     ]):
         with col:
             st.markdown(f"""
@@ -419,6 +421,11 @@ if st.session_state["page"] == "🏠 Home":
     <strong>How to use:</strong> Navigate to <strong>Prediction</strong> in the sidebar, fill in your details,
     and click <em>Assess My Risk</em> to get your result, interactive charts, a model comparison, and a downloadable PDF report.
     </div>""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("Continue to Prediction ➡️", key="nav_home_pred", use_container_width=True):
+        st.session_state["page"] = "🔮 Prediction"
+        st.rerun()
 
 
 # ═══════════════════════════════════════════════════════════
@@ -834,31 +841,65 @@ elif st.session_state["page"] == "🔮 Prediction":
         If you are struggling, please reach out to a qualified healthcare provider.
         </div>""", unsafe_allow_html=True)
 
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("View My History ➡️", key="nav_pred_hist", use_container_width=True):
+        st.session_state["page"] = "📜 My History"
+        st.rerun()
+
 
 # ═══════════════════════════════════════════════════════════
 # PAGE: LOGIN / REGISTER
 # ═══════════════════════════════════════════════════════════
 elif st.session_state["page"] == "🔑 Login / Register":
-    # Centered layout using columns
-    _, center_col, _ = st.columns([1, 2, 1])
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    info_col, spacer, login_col = st.columns([1.1, 0.1, 1])
     
-    with center_col:
+    with info_col:
         st.markdown("""
-        <div style='text-align:center; margin-bottom: 2rem;'>
-            <div style='font-size:4rem; margin-bottom: 0.5rem;'>🔐</div>
-            <h1 class="page-title" style="font-size: 2.2rem;">Account Access</h1>
-            <p style="color: #5a5a72; font-size: 0.95rem; font-weight: 300;">
-                Securely enter the MindGuard portal to manage your evaluations.
-            </p>
+<div style="padding-right: 1.5rem;">
+<div style='font-size:4.5rem; margin-bottom: 0.5rem; animation: float 3s ease-in-out infinite;'>🧠</div>
+<h1 style="font-family: 'Poppins', sans-serif; font-size: 2.8rem; font-weight: 700; color: #1a1a2e; line-height: 1.15; margin-bottom: 1.2rem;">
+Welcome to <br><span style="color: #6c63ff;">MindGuard.</span>
+</h1>
+<p style="color: #5a5a72; font-size: 1.05rem; line-height: 1.6; margin-bottom: 2.2rem; font-weight: 400;">
+Your intelligent, AI-powered companion for mental health screening. 
+Evaluate your psychological well-being across crucial life dimensions, securely track your history, and gain actionable insights.
+</p>
+<div style="display: flex; align-items: flex-start; margin-bottom: 1.5rem; background: #ffffff; padding: 1rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 4px solid #6c63ff;">
+<div style="font-size: 1.6rem; margin-right: 1.2rem; margin-top: 0.1rem;">🤖</div>
+<div>
+<h4 style="margin: 0 0 0.2rem 0; color: #1a1a2e; font-size: 1.05rem; font-weight: 600;">Data-Driven Insights</h4>
+<p style="margin: 0; color: #7a7a8c; font-size: 0.9rem; line-height: 1.4;">Predict risk probabilities using advanced Machine Learning models trained on clinical datasets.</p>
+</div>
+</div>
+<div style="display: flex; align-items: flex-start; margin-bottom: 1.5rem; background: #ffffff; padding: 1rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 4px solid #43a047;">
+<div style="font-size: 1.6rem; margin-right: 1.2rem; margin-top: 0.1rem;">📈</div>
+<div>
+<h4 style="margin: 0 0 0.2rem 0; color: #1a1a2e; font-size: 1.05rem; font-weight: 600;">Track Your Progress</h4>
+<p style="margin: 0; color: #7a7a8c; font-size: 0.9rem; line-height: 1.4;">Save personalized assessments to monitor positive trends and download comprehensive PDF reports.</p>
+</div>
+</div>
+<div style="display: flex; align-items: flex-start; background: #ffffff; padding: 1rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 4px solid #e53935;">
+<div style="font-size: 1.6rem; margin-right: 1.2rem; margin-top: 0.1rem;">🔐</div>
+<div>
+<h4 style="margin: 0 0 0.2rem 0; color: #1a1a2e; font-size: 1.05rem; font-weight: 600;">Private & Secure</h4>
+<p style="margin: 0; color: #7a7a8c; font-size: 0.9rem; line-height: 1.4;">Your data is encrypted, strictly confidential, and managed through cutting-edge cloud infrastructure.</p>
+</div>
+</div>
+</div>
+""", unsafe_allow_html=True)
+        
+    with login_col:
+        st.markdown("""
+        <div style='text-align:center; margin-bottom: 0.2rem; margin-top: 0rem;'>
+            <h2 style="font-family: 'Poppins', sans-serif; font-size: 1.9rem; color: #1a1a2e; font-weight: 600; margin-bottom: 0.1rem;">Get Started</h2>
+            <p style="color: #7a7a8c; font-size: 0.9rem; margin-bottom: 0.2rem;">Sign in or create an account to continue.</p>
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown('<div class="form-card">', unsafe_allow_html=True)
-        
-        tab_login, tab_register = st.tabs(["**Existing User**", "**New Account**"])
+        tab_login, tab_register = st.tabs(["🔒 Existing User", "✨ New Account"])
         
         with tab_login:
-            st.markdown("<br>", unsafe_allow_html=True)
             login_user = st.text_input("Username", key="login_user", placeholder="Enter your username")
             login_pass = st.text_input("Password", type="password", key="login_pass", placeholder="••••••••")
             st.markdown("<br>", unsafe_allow_html=True)
@@ -879,7 +920,6 @@ elif st.session_state["page"] == "🔑 Login / Register":
                         st.error("Invalid credentials. Please try again.")
 
         with tab_register:
-            st.markdown("<br>", unsafe_allow_html=True)
             reg_user = st.text_input("Choose Username", key="reg_user", placeholder="e.g. lilly_well")
             reg_pass = st.text_input("Create Password", type="password", key="reg_pass", placeholder="Min 6 characters")
             reg_pass2 = st.text_input("Confirm Password", type="password", key="reg_pass2", placeholder="Repeat password")
@@ -894,16 +934,14 @@ elif st.session_state["page"] == "🔑 Login / Register":
                 else:
                     success, msg = db_utils.register_user(reg_user, reg_pass)
                     if success:
-                        st.success("Account created successfully! You can now switch to the 'Existing User' tab to sign in.")
+                        st.success("Account created! Switch to 'Existing User' to sign in.")
                     else:
                         st.error(f"Registration failed: {msg}")
 
-        st.markdown('</div>', unsafe_allow_html=True)
-        
         st.markdown("""
         <div style='text-align:center; margin-top: 1.5rem;'>
-            <p style='font-size:0.8rem; color:#7a7a8c;'>
-                By accessing MindGuard, you agree to our terms of clinical screening ethics.
+            <p style='font-size:0.75rem; color:#9a9aab;'>
+                By accessing MindGuard, you agree to our terms of clinical screening ethics and privacy guidelines.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1147,6 +1185,11 @@ elif st.session_state["page"] == "📜 My History" and st.session_state.get("log
             use_container_width=True,
         )
 
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("Learn more in About ➡️", key="nav_hist_about", use_container_width=True):
+        st.session_state["page"] = "📖 About"
+        st.rerun()
+
 
 # ═══════════════════════════════════════════════════════════
 # PAGE: ABOUT
@@ -1154,7 +1197,7 @@ elif st.session_state["page"] == "📜 My History" and st.session_state.get("log
 # ═══════════════════════════════════════════════════════════
 elif st.session_state["page"] == "📖 About":
 
-    st.markdown('<h1 class="page-title">About <em>MindGuard</em></h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="page-title">About MindGuard</h1>', unsafe_allow_html=True)
     st.markdown('<p class="page-subtitle">Understanding mental health risk and how this tool works.</p>', unsafe_allow_html=True)
 
     tab1, tab2, tab3, tab4 = st.tabs(["🧠 Mental Health", "📐 How It Works", "⚠️ Risk Factors", "🌱 Prevention"])
@@ -1233,3 +1276,19 @@ elif st.session_state["page"] == "📖 About":
         <div class="disclaimer">
         If you or someone you know is in crisis, please contact a local mental health helpline or emergency services immediately.
         </div>""", unsafe_allow_html=True)
+        
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("Back to Home 🏠", key="nav_about_home", use_container_width=True):
+            st.session_state["page"] = "🏠 Home"
+            st.rerun()
+    with col2:
+        if st.button("Log Out 🚪", key="nav_about_logout", use_container_width=True):
+            st.session_state["logged_in"] = False
+            st.session_state["username"] = ""
+            st.session_state["user_id"] = None
+            st.session_state["is_admin"] = False
+            st.session_state["page"] = "🔑 Login / Register"
+            st.rerun()
